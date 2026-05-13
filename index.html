@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TechNova S.A. — Simulador Empresarial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface2: #f0efe9;
+      --border: rgba(0,0,0,0.12);
+      --text: #1a1a18;
+      --muted: #6b6b67;
+      --green: #2d8a4e;
+      --red: #c0392b;
+      --info-bg: #e8f0fb;
+      --info-text: #1a4a8a;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18; --surface: #242422; --surface2: #2c2c2a;
+        --border: rgba(255,255,255,0.1); --text: #f0efe9;
+        --muted: #9c9c97; --green: #4caf72; --red: #e57373;
+        --info-bg: #1a2d4a; --info-text: #90b8f0;
+      }
+    }
+
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    .app { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 26px; font-weight: 600; }
+    .header p { font-size: 14px; color: var(--muted); margin-top: 6px; }
+    .badge-gratis {
+      display: inline-block;
+      background: #e8f5e9; color: #2e7d32;
+      font-size: 12px; font-weight: 500;
+      padding: 4px 14px; border-radius: 999px; margin-top: 10px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .badge-gratis { background: #1b3a1e; color: #81c784; }
+    }
+    .badge-semana {
+      display: inline-block;
+      background: var(--info-bg); color: var(--info-text);
+      font-size: 12px; font-weight: 500;
+      padding: 4px 14px; border-radius: 999px; margin-top: 6px; margin-left: 8px;
+    }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+    .kpi { background: var(--surface2); border-radius: var(--radius); padding: 1rem 1.1rem; }
+    .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .kpi-value { font-size: 24px; font-weight: 600; }
+    .kpi-delta { font-size: 12px; margin-top: 4px; color: var(--muted); }
+    .kpi-delta.pos { color: var(--green); }
+    .kpi-delta.neg { color: var(--red); }
+
+    .panel { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+
+    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+    .action-btn {
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px;
+      cursor: pointer; text-align: left; color: var(--text);
+      transition: background .15s, transform .1s;
+    }
+    .action-btn:hover { background: var(--surface2); }
+    .action-btn:active { transform: scale(.98); }
+    .action-icon { font-size: 22px; color: var(--muted); margin-bottom: 8px; }
+    .action-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+    .action-desc { font-size: 12px; color: var(--muted); }
+
+    .chat { display: flex; flex-direction: column; gap: 12px; max-height: 420px; overflow-y: auto; padding-right: 4px; }
+    .chat::-webkit-scrollbar { width: 4px; }
+    .chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .msg { padding: 12px 16px; border-radius: var(--radius); font-size: 14px; line-height: 1.65; max-width: 85%; }
+    .msg.user { background: var(--info-bg); color: var(--info-text); align-self: flex-end; }
+    .msg.ai { background: var(--surface2); color: var(--text); align-self: flex-start; }
+    .msg.loading { opacity: .55; font-style: italic; }
+
+    .input-row { display: flex; gap: 8px; margin-top: 1rem; }
+    .input-row input {
+      flex: 1; border: 0.5px solid var(--border); border-radius: var(--radius);
+      padding: 10px 14px; font-size: 14px;
+      background: var(--surface); color: var(--text); outline: none;
+      transition: border-color .15s;
+    }
+    .input-row input:focus { border-color: rgba(0,0,0,.35); box-shadow: 0 0 0 3px rgba(51,102,204,.1); }
+    .send-btn {
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: var(--radius); padding: 10px 20px;
+      cursor: pointer; font-size: 14px; color: var(--text);
+      transition: background .15s, transform .1s; white-space: nowrap;
+    }
+    .send-btn:hover { background: var(--surface2); }
+    .send-btn:active { transform: scale(.97); }
+
+    .chart-wrap { position: relative; width: 100%; height: 220px; }
+
+    .evento {
+      background: #fff8e1; border-left: 3px solid #f9a825;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 10px 14px; font-size: 13px; color: #5d4037;
+      margin-bottom: 1rem; display: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      .evento { background: #2d2510; color: #f5d88a; border-color: #d4a017; }
+    }
+
+    @media (max-width: 600px) {
+      .app { padding: 1rem; }
+      .kpi-value { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>🏢 TechNova S.A.</h1>
+    <p>Panel de decisiones ejecutivas — simulación empresarial con IA</p>
+    <span class="badge-gratis">✓ Powered by Groq — Gratis</span>
+    <span class="badge-semana" id="badge-semana">Semana 1 · $500,000</span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-label">💰 Capital</div>
+      <div class="kpi-value" id="kpi-capital">$500,000</div>
+      <div class="kpi-delta" id="delta-capital">Capital inicial</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">👥 Empleados</div>
+      <div class="kpi-value" id="kpi-empleados">3</div>
+      <div class="kpi-delta">Equipo fundador</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">📈 Ingresos / mes</div>
+      <div class="kpi-value" id="kpi-ingresos">$0</div>
+      <div class="kpi-delta" id="delta-ing">Sin clientes aún</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">⭐ Moral del equipo</div>
+      <div class="kpi-value" id="kpi-moral">85%</div>
+      <div class="kpi-delta pos" id="delta-moral">Alta</div>
+    </div>
+  </div>
+
+  <div class="evento" id="evento-box"></div>
+
+  <div class="panel">
+    <div class="panel-title">Tomar una decisión</div>
+    <div class="actions">
+      <button class="action-btn" onclick="decidir('Quiero contratar un desarrollador senior a $8,000/mes')">
+        <div class="action-icon"><i class="ti ti-user-plus" aria-hidden="true"></i></div>
+        <div class="action-name">Contratar</div>
+        <div class="action-desc">Incorporar talento al equipo</div>
+      </button>
+      <button class="action-btn" onclick="decidir('Quiero invertir $50,000 en marketing digital y publicidad')">
+        <div class="action-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
+        <div class="action-name">Invertir</div>
+        <div class="action-desc">Destinar capital a crecimiento</div>
+      </button>
+      <button class="action-btn" onclick="decidir('Quiero optimizar procesos internos para reducir costos operativos')">
+        <div class="action-icon"><i class="ti ti-settings" aria-hidden="true"></i></div>
+        <div class="action-name">Optimizar</div>
+        <div class="action-desc">Mejorar eficiencia operativa</div>
+      </button>
+      <button class="action-btn" onclick="decidir('Quiero lanzar un nuevo producto al mercado y necesito tu análisis')">
+        <div class="action-icon"><i class="ti ti-rocket" aria-hidden="true"></i></div>
+        <div class="action-name">Lanzar producto</div>
+        <div class="action-desc">Entrar a un nuevo segmento</div>
+      </button>
+      <button class="action-btn" onclick="decidir('Necesito un reporte financiero detallado del estado actual de la empresa')">
+        <div class="action-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+        <div class="action-name">Ver reporte</div>
+        <div class="action-desc">Análisis financiero completo</div>
+      </button>
+      <button class="action-btn" onclick="decidir('Quiero reducir costos recortando gastos no esenciales')">
+        <div class="action-icon"><i class="ti ti-scissors" aria-hidden="true"></i></div>
+        <div class="action-name">Reducir costos</div>
+        <div class="action-desc">Recorte estratégico de gastos</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Asesor estratégico — Groq (gratis)</div>
+    <div class="chat" id="chat">
+      <div class="msg ai">
+        👋 Bienvenido, CEO. Soy tu asesor estratégico de <strong>TechNova S.A.</strong>, impulsado por Groq de forma gratuita.<br><br>
+        Tienes <strong>$500,000</strong> de capital inicial y un equipo de <strong>3 fundadores</strong>. ¿Cuál es tu primera decisión?
+      </div>
+    </div>
+    <div class="input-row">
+      <input id="user-input" type="text" placeholder="Escribe tu decisión o pregunta al asesor..." onkeydown="if(event.key==='Enter') enviar()" autocomplete="off"/>
+      <button class="send-btn" onclick="enviar()">Enviar ↗</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Evolución del capital</div>
+    <div class="chart-wrap">
+      <canvas id="chart-capital" role="img" aria-label="Gráfica de evolución del capital semana a semana">Capital inicial $500,000.</canvas>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+// ══════════════════════════════════════════
+//  PON AQUÍ TU API KEY DE GROQ (gratis)
+//  https://console.groq.com/keys
+// ══════════════════════════════════════════
+const GROQ_KEY = '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';
+
+const empresa = {
+  semana: 1,
+  capital: 500000,
+  empleados: 3,
+  ingresos: 0,
+  moral: 85,
+  chat: [],
+  historial_capital: [500000],
+  historial_labels: ['Inicio']
+};
+
+const EVENTOS = [
+  { texto: '🌩 Crisis de mercado: costos de adquisición subieron 20%', delta: { capital: -15000, moral: -5 } },
+  { texto: '🎉 Tu startup fue destacada en prensa local', delta: { ingresos: 3000, moral: 10 } },
+  { texto: '🔧 Falla técnica en producción — inversión de emergencia', delta: { capital: -20000, moral: -8 } },
+  { texto: '🤝 Cliente enterprise firmó contrato anual inesperado', delta: { capital: 80000, ingresos: 6000, moral: 15 } },
+  { texto: '📉 Competidor lanzó producto similar — presión alta', delta: { ingresos: -2000, moral: -5 } },
+  { texto: '🏆 Tu equipo ganó hackathon regional', delta: { moral: 12, ingresos: 1500 } }
+];
+
+let decisiones_count = 0;
+
+// ── Gráfica ──
+const ctx = document.getElementById('chart-capital').getContext('2d');
+const grafica = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: empresa.historial_labels,
+    datasets: [{
+      label: 'Capital ($)',
+      data: empresa.historial_capital,
+      borderColor: '#3266ad',
+      backgroundColor: 'rgba(50,102,173,0.08)',
+      borderWidth: 2,
+      pointRadius: 4,
+      pointBackgroundColor: '#3266ad',
+      fill: true,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => ' $' + c.parsed.y.toLocaleString() } }
+    },
+    scales: {
+      y: { ticks: { callback: v => '$' + (v >= 1000 ? Math.round(v/1000) + 'K' : v) } }
+    }
+  }
+});
+
+function actualizarGrafica() {
+  empresa.historial_labels.push('S' + empresa.semana);
+  empresa.historial_capital.push(empresa.capital);
+  grafica.data.labels = empresa.historial_labels;
+  grafica.data.datasets[0].data = empresa.historial_capital;
+  grafica.update();
+}
+
+function fmt(n) {
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1000) return '$' + Math.round(n / 1000) + 'K';
+  return '$' + n.toLocaleString();
+}
+
+function actualizarKPIs(delta) {
+  if (delta) {
+    empresa.capital   = Math.max(0, empresa.capital + (delta.capital || 0));
+    empresa.empleados = Math.max(1, empresa.empleados + (delta.empleados || 0));
+    empresa.ingresos  = Math.max(0, empresa.ingresos + (delta.ingresos || 0));
+    empresa.moral     = Math.min(100, Math.max(0, empresa.moral + (delta.moral || 0)));
+    empresa.semana++;
+    actualizarGrafica();
+  }
+  document.getElementById('kpi-capital').textContent   = fmt(empresa.capital);
+  document.getElementById('kpi-empleados').textContent = empresa.empleados;
+  document.getElementById('kpi-ingresos').textContent  = fmt(empresa.ingresos);
+  document.getElementById('kpi-moral').textContent     = empresa.moral + '%';
+  document.getElementById('badge-semana').textContent  = 'Semana ' + empresa.semana + ' · ' + fmt(empresa.capital);
+
+  const dm = document.getElementById('delta-moral');
+  dm.textContent = empresa.moral >= 80 ? 'Alta' : empresa.moral >= 50 ? 'Media' : 'Baja';
+  dm.className   = 'kpi-delta ' + (empresa.moral >= 60 ? 'pos' : 'neg');
+
+  if (delta && delta.capital !== undefined) {
+    const dc = document.getElementById('delta-capital');
+    dc.textContent = (delta.capital >= 0 ? '▲ ' : '▼ ') + fmt(Math.abs(delta.capital));
+    dc.className   = 'kpi-delta ' + (delta.capital >= 0 ? 'pos' : 'neg');
+  }
+}
+
+function addMsg(html, tipo) {
+  const chat = document.getElementById('chat');
+  const div  = document.createElement('div');
+  div.className = 'msg ' + tipo;
+  div.innerHTML = html;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function mostrarEvento() {
+  const ev  = EVENTOS[Math.floor(Math.random() * EVENTOS.length)];
+  const box = document.getElementById('evento-box');
+  box.textContent   = '⚡ Evento externo: ' + ev.texto;
+  box.style.display = 'block';
+  actualizarKPIs(ev.delta);
+  addMsg('⚡ <strong>Evento externo:</strong> ' + ev.texto, 'ai');
+  setTimeout(() => { box.style.display = 'none'; }, 8000);
+}
+
+// ══════════════════════════════════════════
+//  LLAMADA A GROQ API (gratis)
+// ══════════════════════════════════════════
+async function llamarGroq(mensaje) {
+  const sistemaPrompt = `Eres el asesor estratégico de TechNova S.A., una startup de software B2B latinoamericana.
+
+ESTADO ACTUAL:
+- Capital disponible: $${empresa.capital.toLocaleString()}
+- Empleados: ${empresa.empleados}
+- Ingresos mensuales: $${empresa.ingresos.toLocaleString()}
+- Moral del equipo: ${empresa.moral}%
+- Semana: ${empresa.semana}
+
+INSTRUCCIONES:
+1. Responde en español, de forma profesional y directa.
+2. Analiza la decisión con datos concretos (2-4 oraciones con números realistas).
+3. Menciona riesgos y oportunidades reales.
+4. Al final de tu respuesta incluye EXACTAMENTE esta línea con el impacto numérico:
+
+DELTA:{"capital":-8000,"empleados":1,"ingresos":2000,"moral":5}
+
+Donde: capital=gasto(negativo) o ingreso(positivo) esta semana. ingresos=cambio en ingresos MENSUALES recurrentes. Sé realista con los números.`;
+
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + GROQ_KEY
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: 1000,
+      messages: [
+        { role: 'system', content: sistemaPrompt },
+        ...empresa.chat,
+        { role: 'user', content: mensaje }
+      ]
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || 'Error de API Groq');
+
+  const texto = data.choices?.[0]?.message?.content || 'Sin respuesta.';
+  empresa.chat.push({ role: 'user',      content: mensaje });
+  empresa.chat.push({ role: 'assistant', content: texto });
+  return texto;
+}
+
+async function procesar(mensaje) {
+  const loader = addMsg('⏳ Analizando tu decisión...', 'ai loading');
+  try {
+    const respuesta = await llamarGroq(mensaje);
+    loader.remove();
+
+    const partes      = respuesta.split('DELTA:');
+    const textoLimpio = partes[0].trim();
+
+    addMsg(textoLimpio.replace(/\n/g, '<br>'), 'ai');
+
+    if (partes[1]) {
+      try {
+        const raw   = partes[1].trim().split('\n')[0];
+        const delta = JSON.parse(raw);
+        actualizarKPIs(delta);
+      } catch (e) {
+        actualizarKPIs(null);
+      }
+    }
+
+    decisiones_count++;
+    if (decisiones_count % 3 === 0) setTimeout(mostrarEvento, 1400);
+
+  } catch (err) {
+    loader.remove();
+    addMsg('⚠️ Error: ' + err.message + '<br><small>Revisa tu API key de Groq en el archivo.</small>', 'ai');
+  }
+}
+
+function decidir(texto) { addMsg(texto, 'user'); procesar(texto); }
+
+function enviar() {
+  const inp = document.getElementById('user-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  inp.value = '';
+  decidir(val);
+}
+</script>
+</body>
+</html>
