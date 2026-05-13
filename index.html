@@ -1,432 +1,1054 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TechNova S.A. — Simulador Empresarial</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TechNova S.A. — Executive Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    :root {
-      --bg: #f5f4f0;
-      --surface: #ffffff;
-      --surface2: #f0efe9;
-      --border: rgba(0,0,0,0.12);
-      --text: #1a1a18;
-      --muted: #6b6b67;
-      --green: #2d8a4e;
-      --red: #c0392b;
-      --info-bg: #e8f0fb;
-      --info-text: #1a4a8a;
-      --radius: 10px;
-      --radius-lg: 14px;
-    }
+:root{
+  --bg:#080c10;
+  --bg2:#0d1117;
+  --bg3:#111820;
+  --surface:#141c26;
+  --surface2:#1a2435;
+  --border:#1e2d42;
+  --border2:#243348;
+  --accent:#00d4ff;
+  --accent2:#0099cc;
+  --accent-glow:rgba(0,212,255,0.15);
+  --green:#00e5a0;
+  --green-dim:rgba(0,229,160,0.12);
+  --red:#ff4d6d;
+  --red-dim:rgba(255,77,109,0.12);
+  --amber:#ffb800;
+  --amber-dim:rgba(255,184,0,0.12);
+  --text:#e8f0f8;
+  --text2:#7a9ab8;
+  --text3:#3d5a78;
+  --font:'Sora',sans-serif;
+  --mono:'DM Mono',monospace;
+  --r:8px;
+  --r-lg:12px;
+}
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1a1a18; --surface: #242422; --surface2: #2c2c2a;
-        --border: rgba(255,255,255,0.1); --text: #f0efe9;
-        --muted: #9c9c97; --green: #4caf72; --red: #e57373;
-        --info-bg: #1a2d4a; --info-text: #90b8f0;
-      }
-    }
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex}
 
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
-    .app { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+/* ══ SIDEBAR ══ */
+.sidebar{
+  width:220px;min-width:220px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:0;
+  position:relative;z-index:10;
+}
+.sidebar-logo{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--border);
+}
+.logo-mark{
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+  box-shadow:0 0 20px var(--accent-glow);
+}
+.logo-text{
+  font-size:15px;font-weight:700;
+  letter-spacing:-.3px;
+  color:var(--text);
+}
+.logo-sub{
+  font-size:10px;color:var(--text3);
+  font-family:var(--mono);
+  margin-top:1px;letter-spacing:.05em;
+}
+.sidebar-nav{
+  flex:1;padding:16px 10px;
+  display:flex;flex-direction:column;gap:2px;
+  overflow-y:auto;
+}
+.nav-section{
+  font-size:9px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);
+  padding:12px 10px 6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--r);
+  cursor:pointer;font-size:13px;color:var(--text2);
+  transition:all .15s;border:1px solid transparent;
+  user-select:none;
+}
+.nav-item:hover{background:var(--surface);color:var(--text);}
+.nav-item.active{
+  background:var(--accent-glow);
+  border-color:rgba(0,212,255,0.2);
+  color:var(--accent);
+}
+.nav-item i{font-size:17px;}
+.nav-badge{
+  margin-left:auto;
+  background:var(--red);color:#fff;
+  font-size:9px;font-weight:700;
+  padding:2px 6px;border-radius:99px;
+}
 
-    .header { text-align: center; margin-bottom: 2rem; }
-    .header h1 { font-size: 26px; font-weight: 600; }
-    .header p { font-size: 14px; color: var(--muted); margin-top: 6px; }
-    .badge-gratis {
-      display: inline-block;
-      background: #e8f5e9; color: #2e7d32;
-      font-size: 12px; font-weight: 500;
-      padding: 4px 14px; border-radius: 999px; margin-top: 10px;
-    }
-    @media (prefers-color-scheme: dark) {
-      .badge-gratis { background: #1b3a1e; color: #81c784; }
-    }
-    .badge-semana {
-      display: inline-block;
-      background: var(--info-bg); color: var(--info-text);
-      font-size: 12px; font-weight: 500;
-      padding: 4px 14px; border-radius: 999px; margin-top: 6px; margin-left: 8px;
-    }
+.sidebar-footer{
+  padding:16px;border-top:1px solid var(--border);
+}
+.company-status{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  background:var(--surface);border-radius:var(--r);
+  border:1px solid var(--border);
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  flex-shrink:0;
+}
+.status-text{font-size:11px;color:var(--text2);}
+.status-week{font-size:10px;color:var(--text3);font-family:var(--mono);}
 
-    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-    .kpi { background: var(--surface2); border-radius: var(--radius); padding: 1rem 1.1rem; }
-    .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .kpi-value { font-size: 24px; font-weight: 600; }
-    .kpi-delta { font-size: 12px; margin-top: 4px; color: var(--muted); }
-    .kpi-delta.pos { color: var(--green); }
-    .kpi-delta.neg { color: var(--red); }
+/* ══ MAIN ══ */
+.main{
+  flex:1;display:flex;flex-direction:column;
+  overflow:hidden;min-width:0;
+}
 
-    .panel { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; }
-    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+/* ── TOPBAR ── */
+.topbar{
+  height:56px;min-height:56px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+}
+.topbar-title{
+  font-size:15px;font-weight:600;flex:1;
+}
+.topbar-tag{
+  font-size:10px;font-family:var(--mono);
+  color:var(--accent);
+  background:var(--accent-glow);
+  border:1px solid rgba(0,212,255,0.2);
+  padding:3px 10px;border-radius:99px;
+}
+.topbar-semana{
+  font-size:11px;color:var(--text2);
+  font-family:var(--mono);
+}
 
-    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
-    .action-btn {
-      background: var(--surface); border: 0.5px solid var(--border);
-      border-radius: var(--radius); padding: 14px 16px;
-      cursor: pointer; text-align: left; color: var(--text);
-      transition: background .15s, transform .1s;
-    }
-    .action-btn:hover { background: var(--surface2); }
-    .action-btn:active { transform: scale(.98); }
-    .action-icon { font-size: 22px; color: var(--muted); margin-bottom: 8px; }
-    .action-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
-    .action-desc { font-size: 12px; color: var(--muted); }
+/* ── CONTENT ── */
+.content{
+  flex:1;overflow-y:auto;
+  padding:24px;
+  display:flex;flex-direction:column;gap:20px;
+}
 
-    .chat { display: flex; flex-direction: column; gap: 12px; max-height: 420px; overflow-y: auto; padding-right: 4px; }
-    .chat::-webkit-scrollbar { width: 4px; }
-    .chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+/* ── KPI ROW ── */
+.kpi-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:14px;
+}
+.kpi-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:18px 20px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s;
+}
+.kpi-card:hover{border-color:var(--border2);}
+.kpi-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.kpi-card:hover::before{opacity:1;}
+.kpi-icon{
+  font-size:18px;color:var(--text3);margin-bottom:12px;
+}
+.kpi-label{font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;}
+.kpi-value{font-size:26px;font-weight:700;letter-spacing:-.5px;font-family:var(--mono);}
+.kpi-delta{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;margin-top:6px;
+  padding:3px 8px;border-radius:99px;
+  font-family:var(--mono);
+}
+.kpi-delta.pos{background:var(--green-dim);color:var(--green);}
+.kpi-delta.neg{background:var(--red-dim);color:var(--red);}
+.kpi-delta.neu{background:var(--surface2);color:var(--text2);}
 
-    .msg { padding: 12px 16px; border-radius: var(--radius); font-size: 14px; line-height: 1.65; max-width: 85%; }
-    .msg.user { background: var(--info-bg); color: var(--info-text); align-self: flex-end; }
-    .msg.ai { background: var(--surface2); color: var(--text); align-self: flex-start; }
-    .msg.loading { opacity: .55; font-style: italic; }
+/* ── GRID 2 COL ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:20px;}
 
-    .input-row { display: flex; gap: 8px; margin-top: 1rem; }
-    .input-row input {
-      flex: 1; border: 0.5px solid var(--border); border-radius: var(--radius);
-      padding: 10px 14px; font-size: 14px;
-      background: var(--surface); color: var(--text); outline: none;
-      transition: border-color .15s;
-    }
-    .input-row input:focus { border-color: rgba(0,0,0,.35); box-shadow: 0 0 0 3px rgba(51,102,204,.1); }
-    .send-btn {
-      background: var(--surface); border: 0.5px solid var(--border);
-      border-radius: var(--radius); padding: 10px 20px;
-      cursor: pointer; font-size: 14px; color: var(--text);
-      transition: background .15s, transform .1s; white-space: nowrap;
-    }
-    .send-btn:hover { background: var(--surface2); }
-    .send-btn:active { transform: scale(.97); }
+/* ── CARD ── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.card-title i{font-size:16px;color:var(--text3);}
+.card-subtitle{font-size:11px;color:var(--text2);}
+.card-body{padding:20px;}
 
-    .chart-wrap { position: relative; width: 100%; height: 220px; }
+/* ── CHART ── */
+.chart-wrap{position:relative;width:100%;height:200px;}
 
-    .evento {
-      background: #fff8e1; border-left: 3px solid #f9a825;
-      border-radius: 0 var(--radius) var(--radius) 0;
-      padding: 10px 14px; font-size: 13px; color: #5d4037;
-      margin-bottom: 1rem; display: none;
-    }
-    @media (prefers-color-scheme: dark) {
-      .evento { background: #2d2510; color: #f5d88a; border-color: #d4a017; }
-    }
+/* ── DECISIONES ── */
+.decisions-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;padding:16px;
+}
+.decision-btn{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:14px;cursor:pointer;
+  text-align:left;color:var(--text);
+  transition:all .15s;
+  display:flex;flex-direction:column;gap:6px;
+}
+.decision-btn:hover{
+  background:var(--surface2);
+  border-color:var(--accent);
+  transform:translateY(-1px);
+}
+.decision-btn:active{transform:scale(.98);}
+.decision-btn i{font-size:20px;color:var(--accent);}
+.decision-name{font-size:12px;font-weight:600;}
+.decision-cost{font-size:10px;color:var(--text2);font-family:var(--mono);}
 
-    @media (max-width: 600px) {
-      .app { padding: 1rem; }
-      .kpi-value { font-size: 20px; }
-    }
-  </style>
+/* ── CHAT ── */
+.chat-body{
+  display:flex;flex-direction:column;gap:10px;
+  max-height:280px;overflow-y:auto;
+  padding:16px;
+}
+.msg{
+  padding:10px 14px;border-radius:var(--r);
+  font-size:13px;line-height:1.65;max-width:88%;
+}
+.msg.user{
+  background:rgba(0,212,255,0.1);
+  border:1px solid rgba(0,212,255,0.2);
+  color:var(--accent);align-self:flex-end;
+}
+.msg.ai{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  color:var(--text);align-self:flex-start;
+}
+.msg.loading{opacity:.5;font-style:italic;color:var(--text2);}
+.chat-input-row{
+  display:flex;gap:8px;padding:12px 16px;
+  border-top:1px solid var(--border);
+}
+.chat-input-row input{
+  flex:1;background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--r);padding:9px 14px;
+  font-size:13px;color:var(--text);
+  font-family:var(--font);outline:none;
+  transition:border-color .15s;
+}
+.chat-input-row input:focus{border-color:var(--accent);}
+.chat-input-row input::placeholder{color:var(--text3);}
+.chat-send{
+  background:var(--accent);color:#000;
+  border:none;border-radius:var(--r);
+  padding:9px 16px;cursor:pointer;
+  font-size:12px;font-weight:700;
+  font-family:var(--font);
+  transition:all .15s;white-space:nowrap;
+}
+.chat-send:hover{background:#00eeff;transform:translateY(-1px);}
+
+/* ── EMPLEADOS TABLE ── */
+.emp-table{width:100%;border-collapse:collapse;font-size:12px;}
+.emp-table th{
+  text-align:left;padding:8px 12px;
+  color:var(--text3);font-weight:600;
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+}
+.emp-table td{padding:10px 12px;border-bottom:1px solid var(--border);}
+.emp-table tr:last-child td{border-bottom:none;}
+.emp-table tr:hover td{background:var(--bg3);}
+.emp-avatar{
+  width:26px;height:26px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;margin-right:8px;vertical-align:middle;
+}
+.pill{
+  display:inline-block;font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:99px;font-family:var(--mono);
+}
+.pill.dev{background:rgba(0,212,255,0.1);color:var(--accent);}
+.pill.mkt{background:rgba(0,229,160,0.1);color:var(--green);}
+.pill.ops{background:rgba(255,184,0,0.1);color:var(--amber);}
+.pill.ceo{background:rgba(255,77,109,0.1);color:var(--red);}
+
+/* ── EVENTOS ── */
+.evento-toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--surface2);
+  border:1px solid var(--amber);
+  border-radius:var(--r-lg);
+  padding:14px 18px;
+  max-width:320px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  z-index:999;
+  display:none;
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.evento-title{font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;}
+.evento-text{font-size:12px;color:var(--text2);line-height:1.5;}
+
+/* ── MARKET BAR ── */
+.market-bar{
+  display:flex;align-items:center;gap:20px;
+  padding:10px 24px;
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:11px;
+  color:var(--text2);overflow:hidden;
+  flex-shrink:0;
+}
+.market-item{display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.market-item .up{color:var(--green);}
+.market-item .down{color:var(--red);}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{margin-top:8px;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;}
+.progress-bar{height:5px;background:var(--bg3);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.fill-accent{background:linear-gradient(90deg,var(--accent2),var(--accent));}
+.fill-green{background:var(--green);}
+.fill-amber{background:var(--amber);}
+.fill-red{background:var(--red);}
+
+/* ── VIEWS ── */
+.view{display:none;}
+.view.active{display:contents;}
+
+/* ── FADE IN ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.kpi-card,.card{animation:fadeUp .3s ease both;}
+.kpi-card:nth-child(1){animation-delay:.05s}
+.kpi-card:nth-child(2){animation-delay:.1s}
+.kpi-card:nth-child(3){animation-delay:.15s}
+.kpi-card:nth-child(4){animation-delay:.2s}
+.kpi-card:nth-child(5){animation-delay:.25s}
+
+@media(max-width:900px){
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .decisions-grid{grid-template-columns:repeat(2,1fr);}
+  .sidebar{width:180px;min-width:180px;}
+}
+@media(max-width:640px){
+  .sidebar{display:none;}
+  .decisions-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
 </head>
 <body>
-<div class="app">
 
-  <div class="header">
-    <h1>🏢 TechNova S.A.</h1>
-    <p>Panel de decisiones ejecutivas — simulación empresarial con IA</p>
-    <span class="badge-gratis">✓ Powered by Groq — Gratis</span>
-    <span class="badge-semana" id="badge-semana">Semana 1 · $500,000</span>
-  </div>
-
-  <div class="kpis">
-    <div class="kpi">
-      <div class="kpi-label">💰 Capital</div>
-      <div class="kpi-value" id="kpi-capital">$500,000</div>
-      <div class="kpi-delta" id="delta-capital">Capital inicial</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">👥 Empleados</div>
-      <div class="kpi-value" id="kpi-empleados">3</div>
-      <div class="kpi-delta">Equipo fundador</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">📈 Ingresos / mes</div>
-      <div class="kpi-value" id="kpi-ingresos">$0</div>
-      <div class="kpi-delta" id="delta-ing">Sin clientes aún</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">⭐ Moral del equipo</div>
-      <div class="kpi-value" id="kpi-moral">85%</div>
-      <div class="kpi-delta pos" id="delta-moral">Alta</div>
-    </div>
-  </div>
-
-  <div class="evento" id="evento-box"></div>
-
-  <div class="panel">
-    <div class="panel-title">Tomar una decisión</div>
-    <div class="actions">
-      <button class="action-btn" onclick="decidir('Quiero contratar un desarrollador senior a $8,000/mes')">
-        <div class="action-icon"><i class="ti ti-user-plus" aria-hidden="true"></i></div>
-        <div class="action-name">Contratar</div>
-        <div class="action-desc">Incorporar talento al equipo</div>
-      </button>
-      <button class="action-btn" onclick="decidir('Quiero invertir $50,000 en marketing digital y publicidad')">
-        <div class="action-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
-        <div class="action-name">Invertir</div>
-        <div class="action-desc">Destinar capital a crecimiento</div>
-      </button>
-      <button class="action-btn" onclick="decidir('Quiero optimizar procesos internos para reducir costos operativos')">
-        <div class="action-icon"><i class="ti ti-settings" aria-hidden="true"></i></div>
-        <div class="action-name">Optimizar</div>
-        <div class="action-desc">Mejorar eficiencia operativa</div>
-      </button>
-      <button class="action-btn" onclick="decidir('Quiero lanzar un nuevo producto al mercado y necesito tu análisis')">
-        <div class="action-icon"><i class="ti ti-rocket" aria-hidden="true"></i></div>
-        <div class="action-name">Lanzar producto</div>
-        <div class="action-desc">Entrar a un nuevo segmento</div>
-      </button>
-      <button class="action-btn" onclick="decidir('Necesito un reporte financiero detallado del estado actual de la empresa')">
-        <div class="action-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
-        <div class="action-name">Ver reporte</div>
-        <div class="action-desc">Análisis financiero completo</div>
-      </button>
-      <button class="action-btn" onclick="decidir('Quiero reducir costos recortando gastos no esenciales')">
-        <div class="action-icon"><i class="ti ti-scissors" aria-hidden="true"></i></div>
-        <div class="action-name">Reducir costos</div>
-        <div class="action-desc">Recorte estratégico de gastos</div>
-      </button>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title">Asesor estratégico — Groq (gratis)</div>
-    <div class="chat" id="chat">
-      <div class="msg ai">
-        👋 Bienvenido, CEO. Soy tu asesor estratégico de <strong>TechNova S.A.</strong>, impulsado por Groq de forma gratuita.<br><br>
-        Tienes <strong>$500,000</strong> de capital inicial y un equipo de <strong>3 fundadores</strong>. ¿Cuál es tu primera decisión?
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🏢</div>
+      <div>
+        <div class="logo-text">TechNova</div>
+        <div class="logo-sub">EXECUTIVE OS</div>
       </div>
     </div>
-    <div class="input-row">
-      <input id="user-input" type="text" placeholder="Escribe tu decisión o pregunta al asesor..." onkeydown="if(event.key==='Enter') enviar()" autocomplete="off"/>
-      <button class="send-btn" onclick="enviar()">Enviar ↗</button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Panel</div>
+    <div class="nav-item active" onclick="setView('dashboard',this)">
+      <i class="ti ti-layout-dashboard"></i> Dashboard
+    </div>
+    <div class="nav-item" onclick="setView('decisiones',this)">
+      <i class="ti ti-brain"></i> Decisiones
+    </div>
+    <div class="nav-section">Empresa</div>
+    <div class="nav-item" onclick="setView('empleados',this)">
+      <i class="ti ti-users"></i> Empleados
+    </div>
+    <div class="nav-item" onclick="setView('finanzas',this)">
+      <i class="ti ti-chart-line"></i> Finanzas
+    </div>
+    <div class="nav-section">IA Asesor</div>
+    <div class="nav-item" onclick="setView('chat',this)">
+      <i class="ti ti-message-bolt"></i> CEO Advisor
+      <span class="nav-badge" id="chat-badge" style="display:none">!</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="company-status">
+      <div class="status-dot"></div>
+      <div>
+        <div class="status-text">Sistema activo</div>
+        <div class="status-week" id="side-semana">Semana 1</div>
+      </div>
     </div>
   </div>
+</aside>
 
-  <div class="panel">
-    <div class="panel-title">Evolución del capital</div>
-    <div class="chart-wrap">
-      <canvas id="chart-capital" role="img" aria-label="Gráfica de evolución del capital semana a semana">Capital inicial $500,000.</canvas>
-    </div>
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard Ejecutivo</div>
+    <span class="topbar-tag">GROQ · Llama 3.3 · 70B</span>
+    <span class="topbar-semana" id="topbar-capital">Capital: $500,000</span>
   </div>
 
+  <div class="content" id="content">
+
+    <!-- ══ VIEW: DASHBOARD ══ -->
+    <div class="view active" id="view-dashboard">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-coin"></i></div>
+          <div class="kpi-label">Capital disponible</div>
+          <div class="kpi-value" id="kpi-capital">$500,000</div>
+          <div class="kpi-delta neu" id="delta-capital">Inicial</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-trending-up"></i></div>
+          <div class="kpi-label">Ingresos / mes</div>
+          <div class="kpi-value" id="kpi-ingresos">$0</div>
+          <div class="kpi-delta neu" id="delta-ingresos">Sin clientes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-users"></i></div>
+          <div class="kpi-label">Empleados</div>
+          <div class="kpi-value" id="kpi-empleados">3</div>
+          <div class="kpi-delta neu">Fundadores</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-heart-rate-monitor"></i></div>
+          <div class="kpi-label">Moral del equipo</div>
+          <div class="kpi-value" id="kpi-moral">85%</div>
+          <div class="kpi-delta pos" id="delta-moral">Alta</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-calendar-week"></i></div>
+          <div class="kpi-label">Semana operativa</div>
+          <div class="kpi-value" id="kpi-semana">1</div>
+          <div class="kpi-delta neu">En curso</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-chart-area-line"></i> Evolución del capital</div>
+            <div class="card-subtitle" id="runway-label">Runway: ∞</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap">
+              <canvas id="chart-capital" role="img" aria-label="Evolución del capital">Capital inicial $500,000</canvas>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-activity"></i> Salud empresarial</div>
+          </div>
+          <div class="card-body">
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Liquidez</span><span id="prog-liq">100%</span></div>
+              <div class="progress-bar"><div class="progress-fill fill-accent" id="bar-liq" style="width:100%"></div></div>
+            </div>
+            <div class="progress-wrap" style="margin-top:16px">
+              <div class="progress-label"><span>Moral equipo</span><span id="prog-mor">85%</span></div>
+              <div class="progress-bar"><div class="progress-fill fill-green" id="bar-mor" style="width:85%"></div></div>
+            </div>
+            <div class="progress-wrap" style="margin-top:16px">
+              <div class="progress-label"><span>Rentabilidad</span><span id="prog-rent">0%</span></div>
+              <div class="progress-bar"><div class="progress-fill fill-amber" id="bar-rent" style="width:0%"></div></div>
+            </div>
+            <div class="progress-wrap" style="margin-top:16px">
+              <div class="progress-label"><span>Riesgo operativo</span><span id="prog-risk">20%</span></div>
+              <div class="progress-bar"><div class="progress-fill fill-red" id="bar-risk" style="width:20%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-users-group"></i> Equipo actual</div>
+            <div class="card-subtitle" id="emp-count-label">3 personas</div>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table class="emp-table" id="emp-table-dash">
+              <thead><tr><th>Nombre</th><th>Rol</th><th>Salario</th></tr></thead>
+              <tbody id="emp-tbody-dash"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-news"></i> Últimas decisiones</div>
+          </div>
+          <div class="card-body" style="padding:0;max-height:220px;overflow-y:auto;">
+            <div id="log-decisiones" style="display:flex;flex-direction:column;gap:0;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: DECISIONES ══ -->
+    <div class="view" id="view-decisiones">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-brain"></i> Centro de decisiones ejecutivas</div>
+          <div class="card-subtitle">Cada acción tiene consecuencias reales</div>
+        </div>
+        <div class="decisions-grid">
+          <button class="decision-btn" onclick="decidirYChat('Quiero contratar un desarrollador senior a $8,000/mes. Analiza el impacto.')">
+            <i class="ti ti-user-plus"></i>
+            <div class="decision-name">Contratar Dev Senior</div>
+            <div class="decision-cost">~$8,000/mes</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero contratar un gerente de ventas a $6,000/mes.')">
+            <i class="ti ti-user-dollar"></i>
+            <div class="decision-name">Contratar Ventas</div>
+            <div class="decision-cost">~$6,000/mes</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero invertir $50,000 en marketing digital y campañas de adquisición.')">
+            <i class="ti ti-speakerphone"></i>
+            <div class="decision-name">Campaña Marketing</div>
+            <div class="decision-cost">$50,000 inversión</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero invertir $30,000 en infraestructura cloud y escalabilidad técnica.')">
+            <i class="ti ti-server"></i>
+            <div class="decision-name">Infraestructura Cloud</div>
+            <div class="decision-cost">$30,000 inversión</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero lanzar un nuevo producto SaaS al mercado latinoamericano.')">
+            <i class="ti ti-rocket"></i>
+            <div class="decision-name">Lanzar Producto</div>
+            <div class="decision-cost">Nuevo segmento</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero optimizar procesos internos con automatización para reducir costos.')">
+            <i class="ti ti-settings-automation"></i>
+            <div class="decision-name">Automatizar Ops</div>
+            <div class="decision-cost">Reducir costos</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero buscar inversores ángeles o capital de riesgo para una ronda seed.')">
+            <i class="ti ti-cash"></i>
+            <div class="decision-name">Buscar Inversión</div>
+            <div class="decision-cost">Ronda seed</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Quiero reducir costos haciendo recortes estratégicos en áreas no críticas.')">
+            <i class="ti ti-scissors"></i>
+            <div class="decision-name">Recorte Estratégico</div>
+            <div class="decision-cost">Austeridad</div>
+          </button>
+          <button class="decision-btn" onclick="decidirYChat('Dame un análisis completo del estado financiero y operativo de la empresa.')">
+            <i class="ti ti-file-analytics"></i>
+            <div class="decision-name">Reporte Ejecutivo</div>
+            <div class="decision-cost">Análisis completo</div>
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-message-bolt"></i> CEO Advisor — Groq IA</div>
+          <div class="card-subtitle">Llama 3.3 · 70B · Gratis</div>
+        </div>
+        <div class="chat-body" id="chat-dec"></div>
+        <div class="chat-input-row">
+          <input id="inp-dec" placeholder="Escribe tu decisión personalizada..." onkeydown="if(event.key==='Enter')enviarDec()" autocomplete="off"/>
+          <button class="chat-send" onclick="enviarDec()">Enviar ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: EMPLEADOS ══ -->
+    <div class="view" id="view-empleados">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-users"></i></div>
+          <div class="kpi-label">Total empleados</div>
+          <div class="kpi-value" id="emp-total">3</div>
+          <div class="kpi-delta neu">En nómina</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-wallet"></i></div>
+          <div class="kpi-label">Nómina mensual</div>
+          <div class="kpi-value" id="emp-nomina">$15,000</div>
+          <div class="kpi-delta neg">Gasto fijo</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-heart-rate-monitor"></i></div>
+          <div class="kpi-label">Moral promedio</div>
+          <div class="kpi-value" id="emp-moral-avg">85%</div>
+          <div class="kpi-delta pos">Buena</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-users"></i> Directorio de empleados</div>
+          <div class="card-subtitle" id="emp-dir-count">3 personas</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="emp-table" style="min-width:500px">
+            <thead><tr><th>Empleado</th><th>Rol</th><th>Área</th><th>Salario/mes</th><th>Estado</th></tr></thead>
+            <tbody id="emp-tbody-full"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: FINANZAS ══ -->
+    <div class="view" id="view-finanzas">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-coin"></i></div>
+          <div class="kpi-label">Capital</div>
+          <div class="kpi-value" id="fin-capital">$500,000</div>
+          <div class="kpi-delta neu">Disponible</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-arrow-up-circle"></i></div>
+          <div class="kpi-label">Ingresos / mes</div>
+          <div class="kpi-value" id="fin-ingresos">$0</div>
+          <div class="kpi-delta neu">MRR</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-arrow-down-circle"></i></div>
+          <div class="kpi-label">Gastos / mes</div>
+          <div class="kpi-value" id="fin-gastos">$15,000</div>
+          <div class="kpi-delta neg">Nómina</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="ti ti-calculator"></i></div>
+          <div class="kpi-label">Burn rate neto</div>
+          <div class="kpi-value" id="fin-burn">-$15,000</div>
+          <div class="kpi-delta neg">Mensual</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-chart-bar"></i> Capital vs Ingresos</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:220px">
+              <canvas id="chart-fin" role="img" aria-label="Capital vs Ingresos">Datos financieros de TechNova</canvas>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-clock"></i> Runway estimado</div>
+          </div>
+          <div class="card-body">
+            <div style="font-size:48px;font-weight:700;font-family:var(--mono);color:var(--accent);margin-bottom:8px;" id="runway-meses">∞</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">meses de operación restantes</div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Capital quemado</span><span id="pct-quemado">0%</span></div>
+              <div class="progress-bar"><div class="progress-fill fill-red" id="bar-quemado" style="width:0%"></div></div>
+            </div>
+            <div style="margin-top:20px;padding:12px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">PROYECCIÓN</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.6;" id="proyeccion-text">Con el ritmo actual, la empresa tiene capital suficiente para operar indefinidamente si no hay gastos adicionales.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: CHAT ══ -->
+    <div class="view" id="view-chat">
+      <div class="card" style="flex:1;display:flex;flex-direction:column;height:calc(100vh - 180px)">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-message-bolt"></i> CEO Advisor — Sesión completa</div>
+          <div class="card-subtitle">Historial de conversación con el asesor IA</div>
+        </div>
+        <div class="chat-body" id="chat-main" style="flex:1;max-height:none;"></div>
+        <div class="chat-input-row">
+          <input id="inp-main" placeholder="Consulta al asesor estratégico..." onkeydown="if(event.key==='Enter')enviarMain()" autocomplete="off"/>
+          <button class="chat-send" onclick="enviarMain()">Enviar ↗</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- MARKET BAR -->
+  <div class="market-bar">
+    <span style="color:var(--text3);font-weight:600;font-size:10px;letter-spacing:.1em">MERCADO</span>
+    <div class="market-item">NASDAQ <span class="up">▲ 1.2%</span></div>
+    <div class="market-item">USD/COP <span id="mkt-cop">3,920</span></div>
+    <div class="market-item">SaaS Index <span class="up">▲ 0.8%</span></div>
+    <div class="market-item">Tasa Fed <span>5.25%</span></div>
+    <div class="market-item" style="margin-left:auto;color:var(--text3)" id="mkt-time"></div>
+  </div>
+</div>
+
+<!-- EVENTO TOAST -->
+<div class="evento-toast" id="evento-toast">
+  <div class="evento-title">⚡ EVENTO DE MERCADO</div>
+  <div class="evento-text" id="evento-text"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 
 // ══════════════════════════════════════════
-//  PON AQUÍ TU API KEY DE GROQ (gratis)
+//  TU API KEY DE GROQ (gratis)
 //  https://console.groq.com/keys
 // ══════════════════════════════════════════
 const GROQ_KEY = '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';
 
-const empresa = {
-  semana: 1,
-  capital: 500000,
-  empleados: 3,
-  ingresos: 0,
-  moral: 85,
-  chat: [],
-  historial_capital: [500000],
-  historial_labels: ['Inicio']
+// ══ ESTADO ══
+const E = {
+  semana:1, capital:500000, ingresos:0, moral:85,
+  chat:[],
+  histCap:[500000], histLabels:['Inicio'], histIng:[0],
+  decisiones_count:0,
+  empleados:[
+    {nombre:'Ana Ruiz',    rol:'CEO & Co-founder', area:'ceo', salario:5000},
+    {nombre:'Luis Mora',   rol:'CTO & Co-founder', area:'dev', salario:5000},
+    {nombre:'Sara Díaz',   rol:'COO & Co-founder', area:'ops', salario:5000},
+  ]
 };
 
-const EVENTOS = [
-  { texto: '🌩 Crisis de mercado: costos de adquisición subieron 20%', delta: { capital: -15000, moral: -5 } },
-  { texto: '🎉 Tu startup fue destacada en prensa local', delta: { ingresos: 3000, moral: 10 } },
-  { texto: '🔧 Falla técnica en producción — inversión de emergencia', delta: { capital: -20000, moral: -8 } },
-  { texto: '🤝 Cliente enterprise firmó contrato anual inesperado', delta: { capital: 80000, ingresos: 6000, moral: 15 } },
-  { texto: '📉 Competidor lanzó producto similar — presión alta', delta: { ingresos: -2000, moral: -5 } },
-  { texto: '🏆 Tu equipo ganó hackathon regional', delta: { moral: 12, ingresos: 1500 } }
+const AVATARS=['#3d7bd4','#2e9e6b','#c05050','#7b5ea7','#d46b3d','#3da8a8'];
+const EVENTOS=[
+  {txt:'Crisis de mercado: CAC subió 30% en el sector SaaS',delta:{capital:-12000,moral:-6}},
+  {txt:'Tu startup fue destacada en TechCrunch Latam — visibilidad x3',delta:{ingresos:4000,moral:12}},
+  {txt:'Falla de seguridad detectada — auditoría de emergencia requerida',delta:{capital:-25000,moral:-10}},
+  {txt:'Cliente Fortune 500 firmó contrato enterprise de $80,000',delta:{capital:80000,ingresos:8000,moral:18}},
+  {txt:'Recesión leve: presupuestos de clientes recortados',delta:{ingresos:-3000,moral:-4}},
+  {txt:'Tu equipo ganó el AWS Startup Challenge Latam',delta:{moral:15,capital:10000}},
+  {txt:'Talento clave renunció para irse a una BigTech',delta:{moral:-12,capital:-5000}},
+  {txt:'Partnership estratégico firmado con empresa Fortune 500',delta:{ingresos:5000,moral:10}},
 ];
 
-let decisiones_count = 0;
-
-// ── Gráfica ──
-const ctx = document.getElementById('chart-capital').getContext('2d');
-const grafica = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: empresa.historial_labels,
-    datasets: [{
-      label: 'Capital ($)',
-      data: empresa.historial_capital,
-      borderColor: '#3266ad',
-      backgroundColor: 'rgba(50,102,173,0.08)',
-      borderWidth: 2,
-      pointRadius: 4,
-      pointBackgroundColor: '#3266ad',
-      fill: true,
-      tension: 0.4
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: c => ' $' + c.parsed.y.toLocaleString() } }
-    },
-    scales: {
-      y: { ticks: { callback: v => '$' + (v >= 1000 ? Math.round(v/1000) + 'K' : v) } }
-    }
-  }
+// ══ GRÁFICA CAPITAL ══
+const ctxCap = document.getElementById('chart-capital').getContext('2d');
+const grafCap = new Chart(ctxCap,{
+  type:'line',
+  data:{labels:E.histLabels,datasets:[
+    {label:'Capital',data:E.histCap,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.06)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#00d4ff',fill:true,tension:0.4},
+    {label:'Ingresos/mes',data:E.histIng,borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,0.04)',borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#00e5a0',fill:true,tension:0.4,borderDash:[4,3]}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toLocaleString()}}},scales:{x:{ticks:{color:'#3d5a78',font:{size:10}}},y:{ticks:{color:'#3d5a78',font:{size:10},callback:v=>'$'+(v>=1000?Math.round(v/1000)+'K':v)},grid:{color:'rgba(30,45,66,0.8)'}}}}
 });
 
-function actualizarGrafica() {
-  empresa.historial_labels.push('S' + empresa.semana);
-  empresa.historial_capital.push(empresa.capital);
-  grafica.data.labels = empresa.historial_labels;
-  grafica.data.datasets[0].data = empresa.historial_capital;
-  grafica.update();
-}
+// ══ GRÁFICA FINANZAS ══
+const ctxFin = document.getElementById('chart-fin').getContext('2d');
+const grafFin = new Chart(ctxFin,{
+  type:'bar',
+  data:{labels:E.histLabels,datasets:[
+    {label:'Capital',data:E.histCap,backgroundColor:'rgba(0,212,255,0.2)',borderColor:'#00d4ff',borderWidth:1.5,borderRadius:4},
+    {label:'Ingresos/mes',data:E.histIng,backgroundColor:'rgba(0,229,160,0.2)',borderColor:'#00e5a0',borderWidth:1.5,borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#3d5a78',font:{size:10}}},y:{ticks:{color:'#3d5a78',font:{size:10},callback:v=>'$'+(v>=1000?Math.round(v/1000)+'K':v)},grid:{color:'rgba(30,45,66,0.8)'}}}}
+});
 
-function fmt(n) {
-  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
-  if (n >= 1000) return '$' + Math.round(n / 1000) + 'K';
-  return '$' + n.toLocaleString();
+// ══ FORMATO ══
+function fmt(n){
+  if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1000)return'$'+Math.round(n/1000)+'K';
+  return'$'+Math.round(n).toLocaleString();
 }
+function pct(a,b){return b===0?0:Math.min(100,Math.round((a/b)*100));}
 
-function actualizarKPIs(delta) {
-  if (delta) {
-    empresa.capital   = Math.max(0, empresa.capital + (delta.capital || 0));
-    empresa.empleados = Math.max(1, empresa.empleados + (delta.empleados || 0));
-    empresa.ingresos  = Math.max(0, empresa.ingresos + (delta.ingresos || 0));
-    empresa.moral     = Math.min(100, Math.max(0, empresa.moral + (delta.moral || 0)));
-    empresa.semana++;
-    actualizarGrafica();
+// ══ ACTUALIZAR UI ══
+function actualizarTodo(delta){
+  if(delta){
+    E.capital   = Math.max(0,E.capital+(delta.capital||0));
+    E.ingresos  = Math.max(0,E.ingresos+(delta.ingresos||0));
+    E.moral     = Math.min(100,Math.max(0,E.moral+(delta.moral||0)));
+    if(delta.empleados&&delta.empleados>0){
+      const roles=[{nombre:'Dev Nuevo',rol:'Desarrollador',area:'dev',salario:8000},{nombre:'Mkt Lead',rol:'Marketing',area:'mkt',salario:6000},{nombre:'Ops Analyst',rol:'Operaciones',area:'ops',salario:5000}];
+      E.empleados.push(roles[Math.floor(Math.random()*roles.length)]);
+    }
+    E.semana++;
+    E.histLabels.push('S'+E.semana);
+    E.histCap.push(E.capital);
+    E.histIng.push(E.ingresos);
+    grafCap.data.labels=E.histLabels;
+    grafCap.data.datasets[0].data=E.histCap;
+    grafCap.data.datasets[1].data=E.histIng;
+    grafCap.update();
+    grafFin.data.labels=E.histLabels;
+    grafFin.data.datasets[0].data=E.histCap;
+    grafFin.data.datasets[1].data=E.histIng;
+    grafFin.update();
   }
-  document.getElementById('kpi-capital').textContent   = fmt(empresa.capital);
-  document.getElementById('kpi-empleados').textContent = empresa.empleados;
-  document.getElementById('kpi-ingresos').textContent  = fmt(empresa.ingresos);
-  document.getElementById('kpi-moral').textContent     = empresa.moral + '%';
-  document.getElementById('badge-semana').textContent  = 'Semana ' + empresa.semana + ' · ' + fmt(empresa.capital);
-
-  const dm = document.getElementById('delta-moral');
-  dm.textContent = empresa.moral >= 80 ? 'Alta' : empresa.moral >= 50 ? 'Media' : 'Baja';
-  dm.className   = 'kpi-delta ' + (empresa.moral >= 60 ? 'pos' : 'neg');
-
-  if (delta && delta.capital !== undefined) {
-    const dc = document.getElementById('delta-capital');
-    dc.textContent = (delta.capital >= 0 ? '▲ ' : '▼ ') + fmt(Math.abs(delta.capital));
-    dc.className   = 'kpi-delta ' + (delta.capital >= 0 ? 'pos' : 'neg');
+  // KPIs dashboard
+  document.getElementById('kpi-capital').textContent=fmt(E.capital);
+  document.getElementById('kpi-ingresos').textContent=fmt(E.ingresos);
+  document.getElementById('kpi-empleados').textContent=E.empleados.length;
+  document.getElementById('kpi-moral').textContent=E.moral+'%';
+  document.getElementById('kpi-semana').textContent=E.semana;
+  // delta capital
+  if(delta&&delta.capital!==undefined){
+    const dc=document.getElementById('delta-capital');
+    dc.textContent=(delta.capital>=0?'▲ ':'▼ ')+fmt(Math.abs(delta.capital));
+    dc.className='kpi-delta '+(delta.capital>=0?'pos':'neg');
   }
+  // delta moral
+  const dm=document.getElementById('delta-moral');
+  dm.textContent=E.moral>=80?'Alta':E.moral>=50?'Media':'Baja';
+  dm.className='kpi-delta '+(E.moral>=60?'pos':'neg');
+  // topbar
+  document.getElementById('topbar-capital').textContent='Capital: '+fmt(E.capital);
+  document.getElementById('side-semana').textContent='Semana '+E.semana;
+  // progress bars
+  const liq=pct(E.capital,500000);
+  document.getElementById('prog-liq').textContent=liq+'%';
+  document.getElementById('bar-liq').style.width=liq+'%';
+  document.getElementById('prog-mor').textContent=E.moral+'%';
+  document.getElementById('bar-mor').style.width=E.moral+'%';
+  const nomina=E.empleados.reduce((s,e)=>s+e.salario,0);
+  const rent=E.ingresos>0?Math.min(100,Math.round((E.ingresos/nomina)*100)):0;
+  document.getElementById('prog-rent').textContent=rent+'%';
+  document.getElementById('bar-rent').style.width=rent+'%';
+  const risk=Math.min(100,Math.round(((500000-E.capital)/500000)*80+(100-E.moral)*0.2));
+  document.getElementById('prog-risk').textContent=risk+'%';
+  document.getElementById('bar-risk').style.width=risk+'%';
+  // finanzas
+  document.getElementById('fin-capital').textContent=fmt(E.capital);
+  document.getElementById('fin-ingresos').textContent=fmt(E.ingresos);
+  document.getElementById('fin-gastos').textContent=fmt(nomina);
+  const burn=E.ingresos-nomina;
+  document.getElementById('fin-burn').textContent=(burn>=0?'+':'')+fmt(burn);
+  const runwayMeses=burn<0?Math.round(E.capital/Math.abs(burn)):Infinity;
+  const runwayStr=runwayMeses===Infinity?'∞':runwayMeses;
+  document.getElementById('runway-meses').textContent=runwayStr;
+  document.getElementById('runway-label').textContent='Runway: '+(runwayMeses===Infinity?'∞ meses':runwayMeses+' meses');
+  const quemado=pct(500000-E.capital,500000);
+  document.getElementById('pct-quemado').textContent=quemado+'%';
+  document.getElementById('bar-quemado').style.width=quemado+'%';
+  document.getElementById('proyeccion-text').textContent=
+    runwayMeses===Infinity?'Con ingresos que cubren gastos, la empresa es sostenible indefinidamente.':
+    runwayMeses>12?`A este ritmo tienes ${runwayMeses} meses de runway. Tiempo suficiente para alcanzar rentabilidad.`:
+    `⚠️ Solo ${runwayMeses} meses de runway. Acción urgente requerida para reducir burn o aumentar ingresos.`;
+  // empleados view
+  renderEmpleados();
 }
 
-function addMsg(html, tipo) {
-  const chat = document.getElementById('chat');
-  const div  = document.createElement('div');
-  div.className = 'msg ' + tipo;
-  div.innerHTML = html;
+function renderEmpleados(){
+  const nomina=E.empleados.reduce((s,e)=>s+e.salario,0);
+  document.getElementById('emp-total').textContent=E.empleados.length;
+  document.getElementById('emp-nomina').textContent=fmt(nomina);
+  document.getElementById('emp-moral-avg').textContent=E.moral+'%';
+  document.getElementById('emp-count-label').textContent=E.empleados.length+' personas';
+  document.getElementById('emp-dir-count').textContent=E.empleados.length+' personas';
+  const rowsHTML=E.empleados.map((emp,i)=>{
+    const color=AVATARS[i%AVATARS.length];
+    const initials=emp.nombre.split(' ').map(p=>p[0]).join('').slice(0,2);
+    return`<tr>
+      <td><span class="emp-avatar" style="background:${color}20;color:${color}">${initials}</span>${emp.nombre}</td>
+      <td>${emp.rol}</td>
+      <td><span class="pill ${emp.area}">${emp.area.toUpperCase()}</span></td>
+      <td style="font-family:var(--mono)">${fmt(emp.salario)}</td>
+      <td><span class="pill dev">Activo</span></td>
+    </tr>`;
+  }).join('');
+  const dashRows=E.empleados.map((emp,i)=>{
+    const color=AVATARS[i%AVATARS.length];
+    const initials=emp.nombre.split(' ').map(p=>p[0]).join('').slice(0,2);
+    return`<tr>
+      <td><span class="emp-avatar" style="background:${color}20;color:${color}">${initials}</span>${emp.nombre}</td>
+      <td><span class="pill ${emp.area}">${emp.rol}</span></td>
+      <td style="font-family:var(--mono)">${fmt(emp.salario)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('emp-tbody-full').innerHTML=rowsHTML;
+  document.getElementById('emp-tbody-dash').innerHTML=dashRows;
+}
+
+// ══ LOG DECISIONES ══
+function logDecision(texto,tipo){
+  const log=document.getElementById('log-decisiones');
+  const d=document.createElement('div');
+  d.style.cssText='padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;display:flex;gap:10px;align-items:flex-start;';
+  const dot=tipo==='pos'?'var(--green)':tipo==='neg'?'var(--red)':'var(--accent)';
+  d.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:${dot};flex-shrink:0;margin-top:4px;"></span><span style="color:var(--text2)">S${E.semana} — ${texto.slice(0,60)}${texto.length>60?'...':''}</span>`;
+  log.prepend(d);
+}
+
+// ══ MENSAJES CHAT ══
+function addMsg(html,tipo,chatId){
+  const chat=document.getElementById(chatId);
+  if(!chat)return null;
+  const div=document.createElement('div');
+  div.className='msg '+tipo;
+  div.innerHTML=html;
   chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop=chat.scrollHeight;
   return div;
 }
 
-function mostrarEvento() {
-  const ev  = EVENTOS[Math.floor(Math.random() * EVENTOS.length)];
-  const box = document.getElementById('evento-box');
-  box.textContent   = '⚡ Evento externo: ' + ev.texto;
-  box.style.display = 'block';
-  actualizarKPIs(ev.delta);
-  addMsg('⚡ <strong>Evento externo:</strong> ' + ev.texto, 'ai');
-  setTimeout(() => { box.style.display = 'none'; }, 8000);
+// ══ EVENTO TOAST ══
+function mostrarEvento(){
+  const ev=EVENTOS[Math.floor(Math.random()*EVENTOS.length)];
+  document.getElementById('evento-text').textContent=ev.txt;
+  const toast=document.getElementById('evento-toast');
+  toast.style.display='block';
+  actualizarTodo(ev.delta);
+  logDecision('⚡ Evento: '+ev.txt,'neu');
+  setTimeout(()=>{toast.style.display='none';},7000);
 }
 
-// ══════════════════════════════════════════
-//  LLAMADA A GROQ API (gratis)
-// ══════════════════════════════════════════
-async function llamarGroq(mensaje) {
-  const sistemaPrompt = `Eres el asesor estratégico de TechNova S.A., una startup de software B2B latinoamericana.
+// ══ LLAMAR GROQ ══
+async function llamarGroq(mensaje){
+  const nomina=E.empleados.reduce((s,e)=>s+e.salario,0);
+  const sistema=`Eres el asesor estratégico de TechNova S.A., startup de software B2B latinoamericana.
 
 ESTADO ACTUAL:
-- Capital disponible: $${empresa.capital.toLocaleString()}
-- Empleados: ${empresa.empleados}
-- Ingresos mensuales: $${empresa.ingresos.toLocaleString()}
-- Moral del equipo: ${empresa.moral}%
-- Semana: ${empresa.semana}
+- Capital: $${E.capital.toLocaleString()}
+- Ingresos mensuales (MRR): $${E.ingresos.toLocaleString()}
+- Nómina mensual: $${nomina.toLocaleString()}
+- Burn rate neto: $${(E.ingresos-nomina).toLocaleString()}/mes
+- Empleados: ${E.empleados.length} (${E.empleados.map(e=>e.rol).join(', ')})
+- Moral del equipo: ${E.moral}%
+- Semana: ${E.semana}
 
 INSTRUCCIONES:
-1. Responde en español, de forma profesional y directa.
-2. Analiza la decisión con datos concretos (2-4 oraciones con números realistas).
-3. Menciona riesgos y oportunidades reales.
-4. Al final de tu respuesta incluye EXACTAMENTE esta línea con el impacto numérico:
+1. Responde en español, profesional y directo (3-5 oraciones).
+2. Usa métricas concretas (ROI, CAC, LTV, runway, MRR).
+3. Menciona riesgo y oportunidad.
+4. Al final incluye EXACTAMENTE:
+DELTA:{"capital":0,"empleados":0,"ingresos":0,"moral":0}
+Con valores realistas. capital=cambio inmediato en caja. ingresos=cambio en MRR mensual recurrente.`;
 
-DELTA:{"capital":-8000,"empleados":1,"ingresos":2000,"moral":5}
-
-Donde: capital=gasto(negativo) o ingreso(positivo) esta semana. ingresos=cambio en ingresos MENSUALES recurrentes. Sé realista con los números.`;
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + GROQ_KEY
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      max_tokens: 1000,
-      messages: [
-        { role: 'system', content: sistemaPrompt },
-        ...empresa.chat,
-        { role: 'user', content: mensaje }
-      ]
+  const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+    body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',
+      max_tokens:1000,
+      messages:[{role:'system',content:sistema},...E.chat,{role:'user',content:mensaje}]
     })
   });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || 'Error de API Groq');
-
-  const texto = data.choices?.[0]?.message?.content || 'Sin respuesta.';
-  empresa.chat.push({ role: 'user',      content: mensaje });
-  empresa.chat.push({ role: 'assistant', content: texto });
+  const data=await res.json();
+  if(!res.ok)throw new Error(data.error?.message||'Error Groq API');
+  const texto=data.choices?.[0]?.message?.content||'Sin respuesta.';
+  E.chat.push({role:'user',content:mensaje});
+  E.chat.push({role:'assistant',content:texto});
   return texto;
 }
 
-async function procesar(mensaje) {
-  const loader = addMsg('⏳ Analizando tu decisión...', 'ai loading');
-  try {
-    const respuesta = await llamarGroq(mensaje);
-    loader.remove();
-
-    const partes      = respuesta.split('DELTA:');
-    const textoLimpio = partes[0].trim();
-
-    addMsg(textoLimpio.replace(/\n/g, '<br>'), 'ai');
-
-    if (partes[1]) {
-      try {
-        const raw   = partes[1].trim().split('\n')[0];
-        const delta = JSON.parse(raw);
-        actualizarKPIs(delta);
-      } catch (e) {
-        actualizarKPIs(null);
-      }
+async function procesar(mensaje, chatId){
+  // Mostrar en ambos chats si aplica
+  const ids = chatId==='both' ? ['chat-dec','chat-main'] : [chatId];
+  const loaders = ids.map(id=>addMsg('⏳ Analizando...','ai loading',id)).filter(Boolean);
+  try{
+    const resp=await llamarGroq(mensaje);
+    loaders.forEach(l=>{if(l&&l.parentNode)l.remove();});
+    const partes=resp.split('DELTA:');
+    const texto=partes[0].trim().replace(/\n/g,'<br>');
+    ids.forEach(id=>addMsg(texto,'ai',id));
+    if(partes[1]){
+      try{
+        const delta=JSON.parse(partes[1].trim().split('\n')[0]);
+        actualizarTodo(delta);
+        logDecision(mensaje,delta.capital>=0?'pos':'neg');
+      }catch{actualizarTodo(null);}
     }
-
-    decisiones_count++;
-    if (decisiones_count % 3 === 0) setTimeout(mostrarEvento, 1400);
-
-  } catch (err) {
-    loader.remove();
-    addMsg('⚠️ Error: ' + err.message + '<br><small>Revisa tu API key de Groq en el archivo.</small>', 'ai');
+    E.decisiones_count++;
+    if(E.decisiones_count%3===0)setTimeout(mostrarEvento,1500);
+    // Badge chat
+    if(chatId!=='chat-main')document.getElementById('chat-badge').style.display='inline';
+  }catch(err){
+    loaders.forEach(l=>{if(l&&l.parentNode)l.remove();});
+    ids.forEach(id=>addMsg('⚠️ Error: '+err.message+'<br><small>Revisa tu API key de Groq.</small>','ai',id));
   }
 }
 
-function decidir(texto) { addMsg(texto, 'user'); procesar(texto); }
-
-function enviar() {
-  const inp = document.getElementById('user-input');
-  const val = inp.value.trim();
-  if (!val) return;
-  inp.value = '';
-  decidir(val);
+function decidirYChat(texto){
+  addMsg(texto,'user','chat-dec');
+  addMsg(texto,'user','chat-main');
+  procesar(texto,'both');
+  setView('decisiones',document.querySelector('.nav-item:nth-child(2)'));
 }
+
+function enviarDec(){
+  const inp=document.getElementById('inp-dec');
+  const v=inp.value.trim();if(!v)return;
+  inp.value='';
+  addMsg(v,'user','chat-dec');
+  addMsg(v,'user','chat-main');
+  procesar(v,'both');
+}
+
+function enviarMain(){
+  const inp=document.getElementById('inp-main');
+  const v=inp.value.trim();if(!v)return;
+  inp.value='';
+  addMsg(v,'user','chat-main');
+  procesar(v,'chat-main');
+  document.getElementById('chat-badge').style.display='none';
+}
+
+// ══ NAVEGACIÓN ══
+function setView(view, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={dashboard:'Dashboard Ejecutivo',decisiones:'Centro de Decisiones',empleados:'Gestión de Empleados',finanzas:'Análisis Financiero',chat:'CEO Advisor — IA'};
+  document.getElementById('topbar-title').textContent=titles[view]||view;
+  if(view==='chat')document.getElementById('chat-badge').style.display='none';
+}
+
+// ══ RELOJ MERCADO ══
+function updateTime(){
+  const now=new Date();
+  document.getElementById('mkt-time').textContent=now.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateTime,1000);updateTime();
+
+// ══ INIT ══
+actualizarTodo(null);
+addMsg('👋 Bienvenido al <strong>CEO Advisor de TechNova S.A.</strong><br><br>Estoy conectado a Groq (Llama 3.3 · 70B) y listo para asesorarte. Tienes <strong>$500,000</strong> de capital y un equipo de <strong>3 co-fundadores</strong>.<br><br>Ve a <strong>Decisiones</strong> para tomar tu primera acción estratégica.','ai','chat-dec');
+addMsg('👋 Bienvenido al <strong>CEO Advisor de TechNova S.A.</strong><br><br>Estoy conectado a Groq (Llama 3.3 · 70B) y listo para asesorarte. Tienes <strong>$500,000</strong> de capital y un equipo de <strong>3 co-fundadores</strong>.<br><br>Ve a <strong>Decisiones</strong> para tomar tu primera acción estratégica.','ai','chat-main');
 </script>
 </body>
 </html>
