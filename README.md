@@ -1,5 +1,8 @@
 🚀 TechNova S.A. — Executive Business Simulator
 
+Sitio web del proyecto:
+https://ronnyvilla3021.github.io/empresa-simulador/
+
 
 🧠 Descripción
 
